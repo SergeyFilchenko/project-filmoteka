@@ -1,3 +1,4 @@
+import { refs } from '../references/refs';
 import { readState, writeState } from './state';
 import { PAGE_TYPE } from './state';
 import { updateInterface } from './update';
@@ -5,6 +6,9 @@ import { updateInterface } from './update';
 //Обработчик на ссылку Home
 function homeLinkClick(e) {
   //e.currentTarger.ClassList.add() - делаем ее активной через css
+  e.preventDefault();
+  refs.homeLink.parentNode.classList.add('header-nav__item-current');
+  refs.myLibLink.parentNode.classList.remove('header-nav__item-current');
   writeState({
     pageType: PAGE_TYPE.TRENDS,
     currentPage: 1,
@@ -17,7 +21,10 @@ function homeLinkClick(e) {
 
 //Обработчик на ссылку MyLibrary
 function myLibLinkClick(e) {
+  e.preventDefault();
   //e.currentTarger.ClassList.add() - делаем ее активной через css
+  refs.homeLink.parentNode.classList.remove('header-nav__item-current');
+  refs.myLibLink.parentNode.classList.add('header-nav__item-current');
   writeState({
     pageType: PAGE_TYPE.LIB_WATCHED,
     currentPage: 1,
@@ -57,22 +64,35 @@ function libTypeBtnClick(e) {
 }
 
 //обработчик клика на пагинатор
-function onPaginatorClick(e) {
-  const value = e.currentTarget.value; //пагинатор при клике на него должен вернуть номер страницы на которую кликнули
+function onPaginatorClick(page) {
   const state = readState();
-  state.currentPage = value;
+  state.currentPage = page;
   writeState(state);
   updateInterface();
 }
 
 //обработчик клика по галерее
 function onGalleryClick(e) {
-  const filmId = null;
+  let nodeWithId = null;
+  if (e.target.nodeName === 'IMG' || e.target.nodeName === 'P') {
+    nodeWithId = e.target.parentNode;
+  }
+  if (e.target.nodeName === 'LI') {
+    nodeWithId = e.target;
+  }
+  if (!nodeWithId) {
+    return;
+  }
+  console.log(nodeWithId.dataset.id);
+
+  //const filmId = null;
   //при клике по карточке фильма в галерее, проверяем e.currentTarget.nodename, если это img или h2, то получаем из дата атрибута родительского элемента id фильма
   //считываем текущий state из sessionStorage
-  const state = readState();
-  state.modalFilmId = filmId;
-  state.isModalOpen = true;
-  writeState(state);
-  updateInterface();
+  //const state = readState();
+  //state.modalFilmId = filmId;
+  //state.isModalOpen = true;
+  //writeState(state);
+  //updateInterface();
 }
+
+export { onPaginatorClick, homeLinkClick, myLibLinkClick, onFormSubmit, onGalleryClick };

@@ -1,4 +1,12 @@
 function divideOnPages(arrayOfId, perPageAmount) {
+  const pageAmount = Math.ceil(arrayOfId.length / perPageAmount);
+  let result = [];
+  let start = 1;
+  for (let i = 1; i <= pageAmount; i += 1) {
+    result[i - 1] = arrayOfId.splice(start - 1, perPageAmount * start);
+    start += perPageAmount;
+  }
+  return result;
   //функция которая принимает массив id (в частности из localStorage)
   //и возвращает двухмерный массив
 }
